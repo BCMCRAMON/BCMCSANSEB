@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BLESSED CHRISTIAN MISSION CHURCH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #000000;
+      --bg2:#000000;
+      --card:#000000;
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.85);
+      --line: rgba(255,255,255,.2);
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --accent:#ffffff;
+      --accent3:#ffffff;
+      --bad:#ff4444;
+      --warn:#ffaa00;
+      --radius:18px;
+      --radius-sm:14px;
+      --btn-bg: #000000;
+      --input-bg: #000000;
+
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background: #000000;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; }
+    .nav{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background: #000000;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner{
+      max-width: 1120px;
+      margin:0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 260px;
+    }
+    .logo{
+      width:54px;
+      height:54px;
+      border-radius: 16px;
+      background: #000000;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      aspect-ratio:1/1;
+      flex-shrink:0;
+    }
+    .logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .brand h1{
+      font-size: 14px;
+      margin:0;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      line-height:1.2;
+      white-space:nowrap;
+    }
+    .brand .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .chip{
+      border: 1px solid var(--line);
+      background: #000000;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .chip:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.35); }
+    .chip.active{
+      background: #000000;
+      border-color: rgba(255,255,255,.35);
+      font-weight: 700;
+    }
+
+    .container{
+      max-width: 1120px;
+      margin:0 auto;
+      padding: 22px 18px 60px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:stretch;
+      margin-top: 8px;
+    }
+    @media (max-width: 900px){ .hero{ grid-template-columns: 1fr; } .brand{ min-width:auto; } }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .hero-main{
+      padding: 22px;
+      position:relative;
+    }
+    .hero-main::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: #000000;
+      pointer-events:none;
+    }
+    .hero-main > *{ position:relative; }
+    .hero-top{ display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; margin-bottom:16px; }
+    .hero-copy{ flex:1; min-width:260px; }
+    .hero-logo-large{ width:320px; max-width:100%; min-width:220px; border-radius:22px; overflow:hidden; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); display:grid; place-items:center; }
+    .hero-logo-large img{ width:100%; height:100%; display:block; object-fit:cover; aspect-ratio:1/1; }
+
+    .kicker{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom: 10px; }
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      color: var(--text);
+      background: #000000;
+      border-radius: 999px;
+      letter-spacing:.02em;
+    }
+
+    .title{ margin: 0; font-size: clamp(28px, 3.6vw, 44px); letter-spacing: -0.02em; text-transform: uppercase; line-height: 1.05; }
+    .subtitle{ margin: 10px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 64ch; }
+
+    .hero-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 16px; }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #000000;
+      color: #fff;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, border-color .12s ease;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.35); }
+    .btn.primary{ background: #000000; border-color: rgba(255,255,255,.35); }
+
+    .hero-side{ padding: 18px; display:flex; flex-direction:column; gap:12px; }
+    .stat{ padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); }
+    .stat .label{ font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+    .stat .value{ margin-top: 6px; font-size: 20px; font-weight: 800; letter-spacing:-.01em; }
+
+    .section{ margin-top: 18px; }
+    .section-header{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin: 6px 4px 12px; }
+    .section-header h2{ margin:0; font-size: 18px; text-transform: uppercase; letter-spacing:.08em; }
+    .section-header p{ margin:0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+
+    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+    @media (max-width: 900px){ .grid-2{ grid-template-columns: 1fr; } }
+
+    .form{ padding: 16px; }
+    .form-row{ display:grid; gap:10px; margin-top: 10px; }
+    .form-row.two{ grid-template-columns: 1fr 1fr; }
+    @media (max-width: 720px){ .form-row.two{ grid-template-columns: 1fr; } }
+
+    label{
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      display:block;
+      margin-bottom: 6px;
+    }
+    input[type="text"], input[type="number"], textarea, select{
+      width:100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.08);
+      outline:none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    textarea{ min-height: 120px; resize: vertical; }
+    input[type="text"]::placeholder, textarea::placeholder{ color: rgba(255,255,255,.45); }
+
+    .help{ margin-top: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+    .hr{ height:1px; background: var(--line); margin: 14px 0; }
+
+    .list{ padding: 14px; }
+    .item{
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #000000;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .item + .item{ margin-top: 10px; }
+
+    .item .meta{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .item .name{ font-weight: 900; letter-spacing: -.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width: 46ch; }
+    .item .sub{ color: var(--muted); font-size: 13px; line-height:1.3; }
+
+    .item .actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+
+    /* Song room black background */
+    #view-songs{ background: #000; padding: 24px; border-radius: 24px; }
+    #view-songs .card{ background: rgba(16,16,16,.95); border-color: rgba(255,255,255,.12); }
+    #view-songs .list{ background: #0b0b0b; border: 1px solid rgba(255,255,255,.1); border-radius: 20px; }
+    #view-songs .item{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
+    #view-songs .item .name, #view-songs .item .sub, #view-songs .section-header h2, #view-songs .section-header p, #view-songs label, #view-songs input, #view-songs select{ color: #fff; }
+    #view-songs input, #view-songs select{ background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); }
+    #view-songs .help{ color: rgba(255,255,255,.75); }
+
+    .mini-btn{
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #000000;
+      color: #fff;
+      padding: 9px 10px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 13px;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .mini-btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.45); }
+    .mini-btn.danger{ border-color: rgba(255,255,255,.45); }
+    .mini-btn.danger:hover{ border-color: rgba(255,255,255,.55); }
+
+    .footer-note{
+      text-align:center;
+      color: rgba(255,255,255,.65);
+      font-size: 12.5px;
+      margin-top: 26px;
+      font-family: var(--mono);
+    }
+
+    .searchbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .small-text{ font-size: 13px; color: var(--muted); line-height:1.4; }
+
+    /* Slide mode overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background: rgba(20,12,8,.72);
+      display:none;
+      z-index:200;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+    }
+    .overlay.open{ display:flex; }
+
+    .overlay-dialog{
+      width: min(980px, 100%);
+      background: #121212;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: 0 30px 90px rgba(0,0,0,.35);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      max-height: 92vh;
+    }
+
+    .overlay-top{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+    }
+    .overlay-top .song-title{ font-weight: 900; letter-spacing:-.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width: 62ch; }
+    .overlay-top .sub{ color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+
+    .overlay-controls{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+
+    .overlay-body{ padding: 18px; overflow:auto; }
+
+    .slide{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .slide .lyrics{
+      font-size: clamp(22px, 3.2vw, 40px);
+      line-height: 1.18;
+      font-weight: 800;
+      letter-spacing:-.01em;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .chords{
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255,255,255,.18);
+      color: rgba(245,245,245,.82);
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 13.5px;
+      line-height:1.45;
+      white-space: pre-wrap;
+      display:none;
+    }
+    .chords.show{ display:block; }
+
+    .overlay-footer{
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      background: rgba(255,255,255,.04);
+    }
+
+    .progress{ font-family: var(--mono); color: var(--muted); font-size: 12.5px; }
+
+    .presentation-overlay .overlay-dialog{ max-height: 96vh; }
+    .presentation-slide{ display:grid; gap:18px; padding:24px; }
+    .presentation-slide .slide-text{ font-size: clamp(24px, 3.4vw, 48px); line-height:1.2; font-weight:800; }
+    .presentation-slide .slide-media{ width:100%; max-height: 60vh; object-fit: contain; border-radius: 18px; background: rgba(255,255,255,.08); }
+    .presentation-slide .slide-media.video{ background: #000; }
+    .presentation-slide .slide-media video{ width:100%; height:auto; border-radius: 18px; }
+    .presentation-slide .slide-media img{ width:100%; height:auto; border-radius: 18px; }
+
+  /* Animations */
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+  .view{animation:fadeIn .35s ease}
+  .card{animation:slideUp .4s ease both}
+  .card:nth-child(2){animation-delay:.06s}
+  .card:nth-child(3){animation-delay:.12s}
+  .card:nth-child(4){animation-delay:.18s}
+  .item{animation:slideUp .35s ease both}
+  .item:nth-child(2){animation-delay:.04s}
+  .item:nth-child(3){animation-delay:.08s}
+  .item:nth-child(4){animation-delay:.12s}
+  .item:nth-child(5){animation-delay:.16s}
+  .item:nth-child(6){animation-delay:.20s}
+  .overlay.open,.overlay-dialog{animation:fadeIn .25s ease}
+  .hero-main{animation:scaleIn .4s ease}
+  .hero-side{animation:slideUp .4s ease both;animation-delay:.1s}
+  .chip,.btn,.mini-btn{transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+  .chip:hover,.btn:hover,.mini-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+  .chip:active,.btn:active,.mini-btn:active{transform:translateY(0)}
+  .stat{animation:slideUp .35s ease both}
+  .stat:nth-child(2){animation-delay:.06s}
+  .stat:nth-child(3){animation-delay:.12s}
+  .section{animation:fadeIn .3s ease}
+  .kicker{animation:slideDown .3s ease}
+  .badge{animation:pulse 2s infinite}
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand" aria-label="Site brand">
+        <div class="logo" aria-hidden="true">
+          <img src="../logo.png" alt="BCMC Logo" />
+        </div>
+        <div>
+          <h1>BLESSED CHRISTIAN MISSION CHURCH</h1>
+          <div class="tag">Developer: JEFF</div>
+        </div>
+      </div>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <div class="chip active" data-view="home">Home</div>
+        <div class="chip" data-view="songs">Songs</div>
+        <div class="chip" data-view="announcements">Announcements</div>
+        <div class="chip" data-view="updates">Updates</div>
+        <div class="chip" data-view="presentations">Presentations</div>
+        <div class="chip" data-view="documentations">Documentations</div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HOME -->
+    <section id="view-home" class="view" aria-label="Home">
+      <div class="hero">
+        <div class="card hero-main">
+          <div class="kicker">
+            <div class="badge">BCMC GLOBAL MINISTRY</div>
+          </div>
+
+          <div class="hero-top">
+            <div class="hero-copy">
+              <h2 class="title">BLESSED CHRISTIAN MISSION CHURCH</h2>
+              <p class="subtitle">WELCOME TO BCMC FAMILY!</p>
+            </div>
+            <div class="hero-logo-large" aria-hidden="true">
+              <img src="../logo.png" alt="BCMC Logo" />
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <div class="btn primary" data-go="songs">🎵 Open Songs</div>
+            <div class="btn" data-go="announcements">📣 Announcements</div>
+            <div class="btn" data-go="updates">📰 Updates</div>
+            <div class="btn" id="btn-export-data">💾 Export Data</div>
+            <div class="btn" id="btn-import-data">📤 Import Data</div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="grid-2">
+            <div>
+              <div class="small-text"><b>COME AND JOIN US EVERY SUNDAY!</b></div>
+              <div class="help">SAN SEBASTAN, RAMON 3319</div>
+            </div>
+            <div>
+              <div class="small-text"><b>UPDATES</b></div>
+              <div class="help">N/A</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card hero-side">
+          <div class="stat"><div class="label">Songs</div><div class="value" id="kpi-song-count">0</div></div>
+          <div class="stat"><div class="label">Upcoming Announcements</div><div class="value" id="kpi-ann-count">0</div></div>
+          <div class="stat"><div class="label">Latest Updates</div><div class="value" id="kpi-upd-count">0</div></div>
+        </aside>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div>
+            <h2>Recent Announcements</h2>
+            <p>Most recent entries.</p>
+          </div>
+          <div class="pill-row">
+            <div class="chip" style="padding:8px 12px;" data-go="announcements">View All →</div>
+          </div>
+        </div>
+        <div class="card list" id="recent-announcements"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div>
+            <h2>Latest Updates</h2>
+            <p>Weekly.</p>
+          </div>
+          <div class="pill-row">
+            <div class="chip" style="padding:8px 12px;" data-go="updates">View All →</div>
+          </div>
+        </div>
+        <div class="card list" id="recent-updates"></div>
+      </div>
+
+      <div class="footer-note">© <span id="year"></span> BLESSED CHRISTIAN MISSION CHURCH </div>
+    </section>
+
+    <!-- SONGS -->
+    <section id="view-songs" class="view" style="display:none" aria-label="Songs">
+      <div class="section-header">
+        <div>
+          <h2>Songs Library</h2>
+          <p>Add songs.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div class="searchbar">
+              <div style="flex:1; min-width: 220px;">
+                <label for="song-search">Search</label>
+                <input id="song-search" type="text" placeholder="Search by title or category..." />
+              </div>
+              <div style="min-width: 190px;">
+                <label for="song-filter">Filter</label>
+                <select id="song-filter"><option value="all">All categories</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="list" id="songs-list"></div>
+        </div>
+
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div class="section-header" style="margin:0; align-items:flex-start;">
+              <div>
+                <h2 style="font-size:16px;">Quick Actions</h2>
+                <p>Browse songs and open Slide Mode for lyrics.</p>
+              </div>
+            </div>
+          </div>
+          <div style="padding:16px;">
+            <div class="help"><b>Slide Mode:</b> click a song row to open lyrics for projector display.</div>
+            <div class="help">Lines per slide + fullscreen are inside Slide Mode.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORSHIP -->
+    <section id="view-worship" class="view" style="display:none" aria-label="Worship Set">
+      <div class="section-header">
+        <div>
+          <h2>Worship Set Builder</h2>
+          <p>Order your service with your song library.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div class="section-header" style="margin:0; align-items:flex-end;">
+              <div>
+                <h2 style="font-size:16px;">Set Controls</h2>
+                <p>Manage songs & set from Admin.</p>
+              </div>
+            </div>
+          </div>
+          <div style="padding:16px;">
+            <div class="help">Start Slide Mode for the first song in your worship set.</div>
+            <div class="hero-actions" style="margin-top: 14px;">
+              <div class="btn primary" id="btn-worship-start">▶ Start Slide Mode</div>
+            </div>
+            <div class="help" style="margin-top:10px;">Or open Admin to edit the set order.</div>
+            <div class="hero-actions" style="margin-top: 10px;">
+<div class="btn" onclick="location.href='BCMC-ADMIN.html'">Admin Panel</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div style="font-weight:900; text-transform:uppercase; letter-spacing:.06em; font-size:14px; color:var(--muted);">Current Worship Set</div>
+            <div class="help" style="margin-top:6px;">Click an item to open Slide Mode.</div>
+          </div>
+          <div class="list" id="worship-list"></div>
+        </div>
+      </div>
+
+      <div class="footer-note">BCMC ALL RIGHT RESERVED</div>
+    </section>
+
+    <!-- PRESENTATIONS -->
+    <section id="view-presentations" class="view" style="display:none" aria-label="Presentations">
+      <div class="section-header">
+        <div>
+          <h2>Presentations</h2>
+          <p>Slides uploaded from the admin panel.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="list" id="presentations-list"></div>
+        <div style="padding:16px;">
+          <div class="help">Presentations uploaded from the Admin Panel (BCMC). Click "View" to open the presentation viewer overlay.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANNOUNCEMENTS -->
+    <section id="view-announcements" class="view" style="display:none" aria-label="Announcements">
+      <div class="section-header">
+        <div>
+          <h2>Announcements</h2>
+          <p>Saved for this church service.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div class="searchbar">
+              <div style="flex:1; min-width: 220px;">
+                <label for="ann-search">Search</label>
+                <input id="ann-search" type="text" placeholder="Search announcements..." />
+              </div>
+              <div style="min-width: 190px;">
+                <label for="ann-sort">Sort</label>
+                <select id="ann-sort">
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="priority">Priority first</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="list" id="ann-list"></div>
+        </div>
+
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div style="font-weight:900; text-transform:uppercase; letter-spacing:.06em; font-size:14px; color:var(--muted);">Announcements</div>
+          </div>
+          <div style="padding:16px;">
+            <div class="help">CHECK ANNOUNCEMENT FOR UPCOMING EVENT AND SERVUCES.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPDATES -->
+    <section id="view-updates" class="view" style="display:none" aria-label="Updates">
+      <div class="section-header">
+        <div>
+          <h2>Updates / News</h2>
+          <p>Lessons, events, and ministry updates.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div class="searchbar">
+              <div style="flex:1; min-width: 220px;">
+                <label for="upd-search">Search</label>
+                <input id="upd-search" type="text" placeholder="Search updates..." />
+              </div>
+              <div style="min-width: 190px;">
+                <label for="upd-sort">Sort</label>
+                <select id="upd-sort">
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="list" id="upd-list"></div>
+        </div>
+
+        <div class="card">
+          <div style="padding:16px; border-bottom: 1px solid var(--line);">
+            <div style="font-weight:900; text-transform:uppercase; letter-spacing:.06em; font-size:14px; color:var(--muted);">Updates</div>
+          </div>
+          <div style="padding:16px;">
+            <div class="help">Review the latest ministry updates and announcements here.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOCUMENTATIONS -->
+    <section id="view-documentations" class="view" style="display:none" aria-label="Documentations">
+      <div class="section-header">
+        <div>
+          <h2>Documentations</h2>
+          <p>Uploaded documentation images</p>
+        </div>
+      </div>
+      <div class="list" id="documentation-list"></div>
+
+      <div class="section">
+        <div class="section-header">
+          <div>
+          <h2>Upload Documentation</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div style="padding:16px; border-bottom: 1px solid var(--line);">
+              <div class="searchbar">
+                <div style="flex:1; min-width: 220px;">
+                  <label for="doc-search">Search</label>
+                  <input id="doc-search" type="text" placeholder="Search documentation..." />
+                </div>
+                <div style="min-width: 190px;">
+                  <label for="doc-filter">Filter</label>
+                  <select id="doc-filter"><option value="all">All categories</option></select>
+                </div>
+              </div>
+              <div class="list" id="docs-list"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="padding:16px; border-bottom: 1px solid var(--line);">
+              <div style="font-weight:900; text-transform:uppercase; letter-spacing:.06em; font-size:14px; color:var(--muted);">Upload Files</div>
+            </div>
+            <div style="padding:16px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slide Mode Overlay (Song Lyrics) -->
+  <div class="overlay" id="slide-overlay" role="dialog" aria-modal="true" aria-label="Song Slide Mode">
+    <div class="overlay-dialog">
+      <div class="overlay-top">
+        <div class="left" style="min-width:0;">
+          <div class="song-title" id="slide-song-title">Song</div>
+          <div class="sub" id="slide-song-sub">Slide 1 of N</div>
+        </div>
+        <div class="overlay-controls">
+          <div class="mini-btn" id="slide-prev">⟵ Prev</div>
+          <div class="mini-btn" id="slide-next">Next ⟶</div>
+          <div class="mini-btn" id="slide-fullscreen">⛶ Fullscreen</div>
+          <div class="mini-btn danger" id="slide-close">✕ Close</div>
+        </div>
+      </div>
+
+      <div class="overlay-body">
+        <div class="slide">
+          <div style="display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
+            <div style="flex:1; min-width: 360px;">
+              <div class="lyrics" id="slide-lyrics">...</div>
+              <div class="chords" id="slide-chords"></div>
+            </div>
+
+            <div style="min-width: 260px;">
+              <div style="font-family: var(--mono); color: var(--muted); font-size: 12.5px; letter-spacing:.06em; text-transform:uppercase;">Display Options</div>
+
+              <div class="form-row" style="margin-top: 10px;">
+                <div>
+                  <label for="slide-lines">Lines per slide</label>
+                  <input id="slide-lines" type="number" min="2" max="12" step="1" value="5" />
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top: 4px; align-items:center;">
+                  <input id="slide-show-chords" type="checkbox" style="width:18px; height:18px;" />
+                  <label for="slide-show-chords" style="margin:0; font-weight:800; color: var(--muted);">Show chords</label>
+                </div>
+
+                <div class="hero-actions" style="margin-top: 12px;">
+                  <div class="btn primary" id="slide-apply" style="padding:10px 12px; border-radius: 14px;">Apply</div>
+                </div>
+
+                <div class="help" style="margin-top: 0;"><b>Tip:</b> for projector, set chords off unless needed.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay-footer">
+        <div class="progress" id="slide-progress">—</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <div class="mini-btn" id="slide-copy">Copy Lyrics (Current)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Presentation Overlay -->
+<input type="file" id="import-data-file" accept="application/json" style="display:none" />
+
+  <script>
+    const STORAGE_KEYS = {
+      songs: 'bcm_songs_v1',
+      announcements: 'bcm_announcements_v1',
+      updates: 'bcm_updates_v1',
+      presentations: 'bcm_presentations_v1',
+      documentations: 'bcm_documentations_v1'
+    };
+
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+    const state = {
+      songs: [],
+      announcements: [],
+      updates: [],
+      presentations: [],
+      documentations: [],
+      worship: [],
+      slide: {
+        open: false,
+        songId: null,
+        slideIndex: 0,
+        slides: [],
+        linesPerSlide: 5,
+        showChords: false,
+      }
+    };
+
+    const nowISO = () => new Date().toISOString();
+    const uid = () => Math.random().toString(16).slice(2) + '-' + Date.now().toString(16);
+    const safeText = (s) => (s ?? '').toString();
+
+function escapeHTML(str) {
+      return safeText(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function persist() {
+      localStorage.setItem(STORAGE_KEYS.songs, JSON.stringify(state.songs));
+      localStorage.setItem(STORAGE_KEYS.announcements, JSON.stringify(state.announcements));
+      localStorage.setItem(STORAGE_KEYS.updates, JSON.stringify(state.updates));
+      localStorage.setItem(STORAGE_KEYS.presentations, JSON.stringify(state.presentations));
+      localStorage.setItem(STORAGE_KEYS.documentations, JSON.stringify(state.documentations));
+    }
+
+    function validateAndClean(arr) {
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(item => item && typeof item === 'object');
+    }
+
+    function load() {
+      try {
+        state.songs = validateAndClean(JSON.parse(localStorage.getItem(STORAGE_KEYS.songs) || '[]'));
+        state.announcements = validateAndClean(JSON.parse(localStorage.getItem(STORAGE_KEYS.announcements) || '[]'));
+        state.updates = validateAndClean(JSON.parse(localStorage.getItem(STORAGE_KEYS.updates) || '[]'));
+        state.presentations = validateAndClean(JSON.parse(localStorage.getItem(STORAGE_KEYS.presentations) || '[]'));
+        state.documentations = validateAndClean(JSON.parse(localStorage.getItem(STORAGE_KEYS.documentations) || '[]'));
+      } catch (e) {
+        state.songs = [];
+        state.announcements = [];
+        state.updates = [];
+        state.presentations = [];
+        state.documentations = [];
+      }
+
+      // Seed data only if empty
+      if (state.songs.length === 0) {
+        state.songs = [
+          {
+            id: uid(),
+            title: 'Blessed Assurance',
+            category: 'Hymn',
+            artist: 'Fanny J. Crosby',
+            lyrics: 'Blessed assurance, Jesus is mine\nO what a foretaste of glory divine\n\nHeir of salvation, purchase of God\nBorn of His Spirit, washed in His blood\n\nThis is my story, this is my song\nPraising my Savior all the day long',
+            chords: '',
+            createdAt: nowISO(),
+            updatedAt: nowISO()
+          },
+          {
+            id: uid(),
+            title: 'Great Is Thy Faithfulness',
+            category: 'Worship',
+            artist: 'Thomas Chisholm',
+            lyrics: 'Great is Thy faithfulness, O God my Father\nThere is no shadow of turning with Thee\n\nThou changest not, Thy compassions they fail not\nAs Thou hast been, Thou forever wilt be\n\nGreat is Thy faithfulness! Great is Thy faithfulness!\nMorning by morning new mercies I see\nAll I have needed Thy hand hath provided\nGreat is Thy faithfulness, Lord, unto me',
+            chords: '',
+            createdAt: nowISO(),
+            updatedAt: nowISO()
+          },
+          {
+            id: uid(),
+            title: 'Praise',
+            category: 'Worship',
+            artist: 'Elevation Worship',
+            lyrics: "Let everything that has breath\nPraise the Lord\nPraise the Lord\n\nI'll praise in the valley\nPraise on the mountain\nI'll praise when I'm sure\nAnd praise when I'm doubting\n\n'Cause praise is the water\nMy enemies drown in\nAs long as I'm breathing\nI've got a reason to\nPraise the Lord\nOh, my soul\nPraise the Lord\nOh, my soul",
+            chords: '',
+            createdAt: nowISO(),
+            updatedAt: nowISO()
+          }
+        ];
+      }
+
+      if (state.announcements.length === 0) {
+        state.announcements = [
+          {
+            id: uid(),
+            title: 'Prayer Meeting',
+            date: '2026-07-25',
+            priority: 'high',
+            body: 'Join us for worship, prayer, and the Word. Please arrive 15 minutes early.',
+            createdAt: nowISO(),
+            updatedAt: nowISO()
+          }
+        ];
+      }
+
+      if (state.updates.length === 0) {
+        state.updates = [
+          {
+            id: uid(),
+            title: 'Weekly Update',
+            date: '2026-07-26',
+            topic: 'Sunday Service',
+            body: 'This week\u2019s focus: God\u2019s faithfulness. Come and be encouraged through Scripture and worship.',
+            createdAt: nowISO(),
+            updatedAt: nowISO()
+          }
+        ];
+      }
+
+      persist();
+    }
+
+    function setView(view) {
+      $$('.chip[data-view]').forEach(el => el.classList.toggle('active', el.dataset.view === view));
+      $$('.view').forEach(el => el.style.display = 'none');
+      const target = $('#view-' + view);
+      if (target) target.style.display = '';
+      if (view === 'home') renderHome();
+      if (view === 'songs') refreshSongsUI();
+      if (view === 'announcements') refreshAnnouncementsUI();
+      if (view === 'updates') refreshUpdatesUI();
+      if (view === 'presentations') renderPresentationsUI();
+      if (view === 'documentations') renderDocumentationsUI();
+    }
+
+    function renderPresentationsUI() {
+      updateKPIs();
+      const wrap = $('#presentations-list');
+      wrap.innerHTML = '';
+      if (!state.presentations.length) {
+        wrap.innerHTML = '<div class="small-text">No presentations uploaded yet.</div>';
+        return;
+      }
+      state.presentations.forEach((f, idx) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        const isImage = f.dataUrl && f.type && f.type.startsWith('image/');
+        const isVideo = f.dataUrl && f.type && f.type.startsWith('video/');
+        const isPdf = f.dataUrl && f.type && f.type === 'application/pdf';
+        var thumb = '';
+        if(isImage) thumb = '<img src="'+escapeHTML(f.dataUrl)+'" alt="" style="width:60px;height:60px;border-radius:12px;object-fit:cover;margin-right:12px;border:1px solid rgba(255,255,255,.14)">';
+        el.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;width:100%">'+
+          thumb+
+          '<div class="meta" style="flex:1;min-width:140px">' +
+          '<div class="name">' + escapeHTML(f.name || 'Presentation') + '</div>' +
+          '<div class="sub">' + escapeHTML(f.caption || '') + (f.type ? ' &bull; '+escapeHTML(f.type) : '') + '</div>' +
+          '</div>' +
+          '<div class="actions">' +
+          (f.dataUrl ? '<div class="mini-btn" onclick="window.open(\''+escapeHTML(f.dataUrl)+'\')">View</div>' : '') +
+          '<div class="mini-btn" onclick="downloadFile(\''+escapeHTML(f.dataUrl||'')+'\', \''+escapeHTML(f.name||'download')+'\')">Download</div>' +
+          '</div>'+
+          '</div>';
+        wrap.appendChild(el);
+      });
+    }
+
+    function renderDocumentationsUI() {
+      const wrap = $('#documentation-list');
+      wrap.innerHTML = '';
+      if (!state.documentations.length) {
+        wrap.innerHTML = '<div class="small-text">No documentation files uploaded yet.</div>';
+        return;
+      }
+      state.documentations.forEach((file, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.padding = '16px';
+        card.style.marginBottom = '12px';
+        const isImage = file.dataUrl && file.type && file.type.startsWith('image/');
+        card.innerHTML =
+          '<div style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">' +
+          (isImage ? '<div class="logo" style="width:80px; height:80px; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.14); flex-shrink:0;"><img src="' + escapeHTML(file.dataUrl) + '" alt="' + escapeHTML(file.name) + '" style="width:100%;height:100%;object-fit:cover;" /></div>' : '') +
+          '<div style="flex:1; min-width:200px;">' +
+          '<div class="small-text" style="font-weight:700;">' + escapeHTML(file.name || 'Unnamed file') + '</div>' +
+          '<div class="help">' + escapeHTML(file.caption || '') + '</div>' +
+          '<div class="help" style="font-size:11px;">' + escapeHTML(file.type || 'Unknown type') + ' \u2022 ' + (file.size ? Math.round(file.size / 1024) + ' KB' : '') + '</div>' +
+          '</div>' +
+          '<div class="actions">' +
+          (file.dataUrl ? '<div class="mini-btn" onclick="window.open(\'' + escapeHTML(file.dataUrl) + '\')">View</div>' : '') +
+          '<div class="mini-btn" onclick="downloadFile(\'' + escapeHTML(file.dataUrl || '') + '\', \'' + escapeHTML(file.name || 'download') + '\')">Download</div>' +
+          '</div>' +
+          '</div>';
+        wrap.appendChild(card);
+      });
+    }
+
+    function downloadFile(dataUrl, filename) {
+      if (!dataUrl) return;
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function updateKPIs() {
+      $('#kpi-song-count').textContent = state.songs.length;
+      $('#kpi-ann-count').textContent = state.announcements.length;
+      $('#kpi-upd-count').textContent = state.updates.length;
+    }
+
+    function truncatePreview(text, max) {
+      if (max === undefined) max = 120;
+      const t = safeText(text).trim();
+      if (t.length <= max) return t;
+      return t.slice(0, max - 1) + '\u2026';
+    }
+
+    // ---------- HOME ----------
+    function renderHome() {
+      updateKPIs();
+
+      const recentAnn = [...state.announcements]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 3);
+      const annWrap = $('#recent-announcements');
+      annWrap.innerHTML = '';
+      if (recentAnn.length === 0) {
+        annWrap.innerHTML = '<div class="small-text">No announcements yet.</div>';
+      } else {
+        recentAnn.forEach(a => {
+          const el = document.createElement('div');
+          el.className = 'item';
+          const pBadge = (a.priority || 'normal') === 'high'
+            ? '<b style="color:var(--bad);">HIGH</b>'
+            : '<b style="color:var(--warn);">NORMAL</b>';
+          el.innerHTML =
+            '<div class="meta">' +
+            '<div class="name">' + escapeHTML(a.title) + '</div>' +
+            '<div class="sub">' + escapeHTML(a.date || '\u2014') + ' \u2022 ' + pBadge + '</div>' +
+            '<div class="sub">' + escapeHTML(truncatePreview(a.body, 140)) + '</div>' +
+            '</div>' +
+            '<div class="actions"><div class="mini-btn" data-go-ann="1">Open</div></div>';
+          annWrap.appendChild(el);
+        });
+      }
+
+      const recentUpd = [...state.updates]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 3);
+      const updWrap = $('#recent-updates');
+      updWrap.innerHTML = '';
+      if (recentUpd.length === 0) {
+        updWrap.innerHTML = '<div class="small-text">No updates yet.</div>';
+      } else {
+        recentUpd.forEach(u => {
+          const el = document.createElement('div');
+          el.className = 'item';
+          el.innerHTML =
+            '<div class="meta">' +
+            '<div class="name">' + escapeHTML(u.title) + '</div>' +
+            '<div class="sub">' + escapeHTML(u.date || '\u2014') + ' \u2022 ' + escapeHTML(u.topic || 'General') + '</div>' +
+            '<div class="sub">' + escapeHTML(truncatePreview(u.body, 140)) + '</div>' +
+            '</div>' +
+            '<div class="actions"><div class="mini-btn" data-go-upd="1">Open</div></div>';
+          updWrap.appendChild(el);
+        });
+      }
+
+      $$('[data-go-ann]').forEach(b => b.addEventListener('click', () => setView('announcements')));
+      $$('[data-go-upd]').forEach(b => b.addEventListener('click', () => setView('updates')));
+    }
+
+    // ---------- SONGS ----------
+    function refreshSongsUI() {
+      updateKPIs();
+
+      const search = ($('#song-search')?.value || '').toLowerCase();
+      const filter = ($('#song-filter')?.value || 'all');
+
+      const cats = Array.from(
+        new Set(state.songs.map(s => safeText(s.category).trim()).filter(Boolean))
+      ).sort((a, b) => a.localeCompare(b));
+      const sel = $('#song-filter');
+      if (sel) {
+        const current = sel.value;
+        sel.innerHTML = '<option value="all">All categories</option>' +
+          cats.map(c => '<option value="' + escapeHTML(c) + '">' + escapeHTML(c) + '</option>').join('');
+        if (cats.includes(current)) sel.value = current;
+      }
+
+      let songs = [...state.songs];
+      if (filter !== 'all') songs = songs.filter(s => safeText(s.category).trim() === filter);
+      if (search) {
+        songs = songs.filter(s =>
+          safeText(s.title).toLowerCase().includes(search) ||
+          safeText(s.category).toLowerCase().includes(search)
+        );
+      }
+      songs.sort((a, b) => a.title.localeCompare(b.title));
+
+      const wrap = $('#songs-list');
+      wrap.innerHTML = '';
+      if (!songs.length) {
+        wrap.innerHTML = '<div class="small-text">No songs found.</div>';
+        return;
+      }
+
+      songs.forEach(s => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML =
+          '<div class="meta">' +
+          '<div class="name">' + escapeHTML(s.title) + '</div>' +
+          '<div class="sub">' + escapeHTML(s.category || '\u2014') + ' \u2022 ' + escapeHTML(s.artist || '\u2014') + '</div>' +
+          '<div class="sub">' + escapeHTML(truncatePreview(s.lyrics, 120)) + '</div>' +
+          '</div>' +
+          '<div class="actions"><div class="mini-btn" data-slide="' + s.id + '">Slide Mode</div></div>';
+        wrap.appendChild(el);
+        el.querySelector('[data-slide]').addEventListener('click', () => openSlideForSong(s.id));
+      });
+    }
+
+    // ---------- SLIDE MODE (Song Lyrics) ----------
+    function splitLyricsIntoSlides(lyrics, linesPerSlide) {
+      const lines = safeText(lyrics).replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
+      const groups = [];
+      for (let i = 0; i < lines.length; i += linesPerSlide) {
+        groups.push(lines.slice(i, i + linesPerSlide).join('\n').trimEnd());
+      }
+      return groups.filter(g => g.trim().length > 0);
+    }
+
+    function openSlideForSong(songId) {
+      const song = state.songs.find(s => s.id === songId);
+      if (!song) return;
+
+      state.slide.songId = song.id;
+      state.slide.slideIndex = 0;
+      state.slide.linesPerSlide = parseInt($('#slide-lines').value || '5', 10);
+      state.slide.showChords = !!$('#slide-show-chords').checked;
+      state.slide.slides = splitLyricsIntoSlides(song.lyrics, Math.max(2, Math.min(12, state.slide.linesPerSlide)));
+
+      renderSlide();
+      $('#slide-overlay').classList.add('open');
+      state.slide.open = true;
+    }
+
+    function renderSlide() {
+      const song = state.songs.find(s => s.id === state.slide.songId);
+      if (!song) return;
+
+      const total = Math.max(1, state.slide.slides.length);
+      const idx = Math.max(0, Math.min(state.slide.slideIndex, total - 1));
+      state.slide.slideIndex = idx;
+
+      const slideText = state.slide.slides[idx] || '';
+      $('#slide-lyrics').textContent = slideText;
+      $('#slide-song-title').textContent = song.title;
+      $('#slide-song-sub').textContent = 'Slide ' + (idx + 1) + ' of ' + total;
+      $('#slide-progress').textContent = 'Use Prev/Next \u2022 Projector-friendly \u2022 ' + (song.category || 'Song');
+
+      const chordsEl = $('#slide-chords');
+      if (state.slide.showChords && safeText(song.chords).trim().length) {
+        chordsEl.textContent = safeText(song.chords).trim();
+        chordsEl.classList.add('show');
+      } else {
+        chordsEl.textContent = '';
+        chordsEl.classList.remove('show');
+      }
+
+      $('#slide-lines').value = state.slide.linesPerSlide;
+      $('#slide-show-chords').checked = state.slide.showChords;
+    }
+
+    function closeSlide() {
+      $('#slide-overlay').classList.remove('open');
+      state.slide.open = false;
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function goSlide(delta) {
+      const total = state.slide.slides.length || 1;
+      state.slide.slideIndex = Math.max(0, Math.min(total - 1, state.slide.slideIndex + delta));
+      renderSlide();
+    }
+
+    async function toggleFullscreen() {
+      const dlg = $('#slide-overlay');
+      if (!document.fullscreenElement) {
+        await dlg.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function wireSlideOverlay() {
+      $('#slide-close').addEventListener('click', closeSlide);
+      $('#slide-prev').addEventListener('click', () => goSlide(-1));
+      $('#slide-next').addEventListener('click', () => goSlide(1));
+      $('#slide-fullscreen').addEventListener('click', toggleFullscreen);
+
+      $('#slide-apply').addEventListener('click', () => {
+        state.slide.linesPerSlide = parseInt($('#slide-lines').value || '5', 10);
+        state.slide.showChords = !!$('#slide-show-chords').checked;
+        const song = state.songs.find(s => s.id === state.slide.songId);
+        if (song) {
+          state.slide.slides = splitLyricsIntoSlides(song.lyrics, Math.max(2, Math.min(12, state.slide.linesPerSlide)));
+          state.slide.slideIndex = 0;
+          renderSlide();
+        }
+      });
+
+      $('#slide-copy').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText($('#slide-lyrics').textContent.trim());
+          $('#slide-copy').textContent = 'Copied!';
+          setTimeout(() => { $('#slide-copy').textContent = 'Copy Lyrics (Current)'; }, 900);
+        } catch (e) {
+          alert('Copy failed. Clipboard may be blocked by your browser.');
+        }
+      });
+
+      $('#slide-overlay').addEventListener('click', (e) => {
+        if (e.target === $('#slide-overlay')) closeSlide();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (!state.slide.open) return;
+        if (e.key === 'Escape') closeSlide();
+        if (e.key === 'ArrowLeft') goSlide(-1);
+        if (e.key === 'ArrowRight') goSlide(1);
+        if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+      });
+    }
+
+    // ---------- WORSHIP ----------
+    function refreshWorshipUI() {
+      updateKPIs();
+      const wrap = $('#worship-list');
+      wrap.innerHTML = '';
+
+      const ordered = [...state.worship].sort((a, b) => a.order - b.order);
+      if (!ordered.length) {
+        wrap.innerHTML = '<div class="small-text">Your worship set is empty. Edit it from Admin.</div>';
+        return;
+      }
+
+      ordered.forEach(w => {
+        const song = state.songs.find(s => s.id === w.songId);
+        const title = song ? song.title : 'Missing song';
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML =
+          '<div class="meta">' +
+          '<div class="name">#' + w.order + ' \u2022 ' + escapeHTML(title) + '</div>' +
+          '<div class="sub">' + escapeHTML(w.notes || '') + '</div>' +
+          '</div>' +
+          '<div class="actions"><div class="mini-btn" data-worship-slide="' + w.songId + '">Slide Mode</div></div>';
+        wrap.appendChild(el);
+        el.querySelector('[data-worship-slide]').addEventListener('click', () => openSlideForSong(w.songId));
+      });
+    }
+
+    function addWorshipItem() {
+      const songId = $('#worship-song-select')?.value;
+      const notes = $('#worship-notes')?.value;
+      if (!songId) return;
+      const nextOrder = (state.worship.reduce((m, x) => Math.max(m, x.order), 0) || 0) + 1;
+      state.worship.push({ id: uid(), songId, order: nextOrder, notes: notes ? notes : '' });
+      persist();
+      refreshWorshipUI();
+      updateKPIs();
+    }
+
+    function startWorshipSlides() {
+      const ordered = state.worship.slice().sort((a, b) => a.order - b.order);
+      if (!ordered.length) return alert('Worship set is empty.');
+      openSlideForSong(ordered[0].songId);
+    }
+
+    // ---------- PRESENTATIONS (view admin uploads) ----------
+
+    // ---------- ANNOUNCEMENTS ----------
+    function refreshAnnouncementsUI() {
+      updateKPIs();
+
+      const search = ($('#ann-search')?.value || '').toLowerCase();
+      const sort = $('#ann-sort')?.value || 'newest';
+
+      let items = [...state.announcements];
+      if (search) {
+        items = items.filter(a =>
+          safeText(a.title).toLowerCase().includes(search) ||
+          safeText(a.body).toLowerCase().includes(search)
+        );
+      }
+
+      items.sort((a, b) => {
+        if (sort === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+        if (sort === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+        if (sort === 'priority') {
+          const pa = (safeText(a.priority || 'normal') === 'high') ? 1 : 0;
+          const pb = (safeText(b.priority || 'normal') === 'high') ? 1 : 0;
+          if (pb !== pa) return pb - pa;
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        }
+        return 0;
+      });
+
+      const wrap = $('#ann-list');
+      wrap.innerHTML = '';
+      if (!items.length) {
+        wrap.innerHTML = '<div class="small-text">No announcements yet.</div>';
+        return;
+      }
+
+      items.forEach(a => {
+        const pBadge = (a.priority || 'normal') === 'high'
+          ? '<b style="color:var(--bad);">HIGH</b>'
+          : '<b style="color:var(--warn);">NORMAL</b>';
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML =
+          '<div class="meta">' +
+          '<div class="name">' + escapeHTML(a.title) + '</div>' +
+          '<div class="sub">' + escapeHTML(a.date || '\u2014') + ' \u2022 ' + pBadge + '</div>' +
+          '<div class="sub">' + escapeHTML(truncatePreview(a.body, 240)) + '</div>' +
+          '</div>' +
+          '<div class="actions"><div class="mini-btn" onclick="location.href=\'BCMC-ADMIN.html\'">Edit</div></div>';
+        wrap.appendChild(el);
+      });
+    }
+
+    // ---------- UPDATES ----------
+    function refreshUpdatesUI() {
+      updateKPIs();
+
+      const search = ($('#upd-search')?.value || '').toLowerCase();
+      const sort = $('#upd-sort')?.value || 'newest';
+
+      let items = [...state.updates];
+      if (search) {
+        items = items.filter(u =>
+          safeText(u.title).toLowerCase().includes(search) ||
+          safeText(u.body).toLowerCase().includes(search) ||
+          safeText(u.topic || '').toLowerCase().includes(search)
+        );
+      }
+
+      items.sort((a, b) => {
+        if (sort === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      const wrap = $('#upd-list');
+      wrap.innerHTML = '';
+      if (!items.length) {
+        wrap.innerHTML = '<div class="small-text">No updates yet.</div>';
+        return;
+      }
+
+      items.forEach(u => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML =
+          '<div class="meta">' +
+          '<div class="name">' + escapeHTML(u.title) + '</div>' +
+          '<div class="sub">' + escapeHTML(u.date || '\u2014') + ' \u2022 ' + escapeHTML(u.topic || 'General') + '</div>' +
+          '<div class="sub">' + escapeHTML(truncatePreview(u.body, 240)) + '</div>' +
+          '</div>' +
+          '<div class="actions"><div class="mini-btn" onclick="location.href=\'BCMC-ADMIN.html\'">Edit</div></div>';
+        wrap.appendChild(el);
+      });
+    }
+
+    // ---------- NAV ----------
+    function wireNav() {
+      $$('.chip[data-view]').forEach(chip =>
+        chip.addEventListener('click', () => setView(chip.dataset.view))
+      );
+      $$('[data-go]').forEach(el =>
+        el.addEventListener('click', () => setView(el.dataset.go))
+      );
+    }
+
+    // ---------- FORMS ----------
+    function wireForms() {
+
+      const songSearch = $('#song-search');
+      if (songSearch) songSearch.addEventListener('input', refreshSongsUI);
+      const songFilter = $('#song-filter');
+      if (songFilter) songFilter.addEventListener('change', refreshSongsUI);
+
+      const annSearch = $('#ann-search');
+      if (annSearch) annSearch.addEventListener('input', refreshAnnouncementsUI);
+      const annSort = $('#ann-sort');
+      if (annSort) annSort.addEventListener('change', refreshAnnouncementsUI);
+
+      const updSearch = $('#upd-search');
+      if (updSearch) updSearch.addEventListener('input', refreshUpdatesUI);
+      const updSort = $('#upd-sort');
+      if (updSort) updSort.addEventListener('change', refreshUpdatesUI);
+    }
+
+    // ---------- INIT ----------
+    function init() {
+      $('#year').textContent = new Date().getFullYear();
+      load();
+      wireNav();
+      wireForms();
+      wireSlideOverlay();
+      setView('home');
+    }
+
+    init();
+  </script>
+</body>
+</html>
