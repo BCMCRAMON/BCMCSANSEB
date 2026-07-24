@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BCMC Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--bg2:#111;--card:#121212;--text:#f5f5f5;--muted:rgba(245,245,245,.72);--line:rgba(255,255,255,.12);--radius:18px;--sans:"Montserrat",sans-serif;--mono:"JetBrains Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--text);background:linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}
+.page{max-width:1120px;margin:0 auto;padding:30px 18px 60px;display:none}
+.page.visible{display:block}
+.header{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}
+.header h1{margin:0;font-size:clamp(28px,4vw,42px);letter-spacing:-.02em}
+.header p{margin:8px 0 0;color:var(--muted);max-width:720px}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+.nav-btn,.btn{border:1px solid var(--line);background:#000000;color:var(--text);padding:12px 16px;border-radius:14px;cursor:pointer;transition:transform .15s;font-family:var(--sans);font-size:14px}
+.nav-btn:hover,.btn:hover{transform:translateY(-1px);background:#000000}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.card-header{padding:22px 24px 18px;border-bottom:1px solid var(--line)}
+.card-header h2{margin:0;font-size:20px}
+.card-body{padding:18px 24px 24px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.tab{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.08);cursor:pointer;font-family:var(--sans);font-size:13px;color:var(--text)}
+.tab.active{background:rgba(255,255,255,.14)}
+.section{display:none}
+.section.active{display:block}
+.form-grid{display:grid;gap:16px;margin-top:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.grid-2{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
+input,textarea,select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);font:inherit}
+textarea{min-height:120px;resize:vertical}
+.controls{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.btn.primary{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.2);font-weight:700}
+.btn.danger{border-color:rgba(255,255,255,.18)}
+.list{display:grid;gap:14px}
+.item{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);padding:16px}
+.item-row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.item-meta{flex:1;min-width:200px}
+.item-meta h3{margin:0 0 6px;font-size:16px}
+.item-meta p{margin:0;color:var(--muted)}
+.item-actions{display:flex;gap:10px;flex-wrap:wrap}
+.note{color:var(--muted);font-size:13px;margin-top:10px}
+pre{white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:13px;color:var(--muted);margin:0}
+.file-preview{display:grid;gap:10px;margin-top:12px}
+.file-card{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.06)}
+.file-card .name{flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-card img{width:60px;height:60px;border-radius:12px;object-fit:cover;border:1px solid var(--line)}
+.admin-logo{width:64px;height:64px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);display:grid;place-items:center}
+.admin-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.gate-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:18px}
+.gate-overlay.hidden{display:none!important}
+.gate-dialog{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px;text-align:center}
+.gate-dialog h2{margin:0 0 8px;font-size:24px}
+.gate-dialog p{color:var(--muted);font-size:14px;margin:0 0 20px}
+.gate-dialog input{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--text);font:inherit;font-size:16px;text-align:center;margin-bottom:10px}
+.gate-dialog .btn{margin-top:6px;width:100%}
+.gate-toggle{color:var(--muted);font-size:13px;margin-top:12px;cursor:pointer;display:inline-block}
+.gate-toggle:hover{color:var(--text)}
+.gate-error{color:#ff6b6b;font-size:13px;margin-top:10px;display:none}
+.gate-error.show{display:block}
+.gate-success{color:#4caf50;font-size:13px;margin-top:10px;display:none}
+.gate-success.show{display:block}
+.user-bar{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px;display:none}
+.user-bar .logout-btn{cursor:pointer;color:#ff6b6b}
+.user-bar .logout-btn:hover{text-decoration:underline}
+.theme-light{--bg:#f4f4f4;--bg2:#ececec;--card:#ffffff;--text:#111111;--muted:rgba(17,17,17,.7);--line:rgba(0,0,0,.12)}
+.toast-container{position:fixed;bottom:20px;right:20px;display:grid;gap:10px;z-index:10000;pointer-events:none;max-width:320px}
+.toast{padding:12px 16px;border-radius:14px;background:rgba(20,20,20,.92);color:#fff;font-size:13px;box-shadow:0 16px 40px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:opacity .25s ease,transform .25s ease;pointer-events:auto}
+.toast.success{background:#2e7d32}
+.toast.error{background:#c62828}
+.toast.visible{opacity:1;transform:translateY(0)}
+.fullscreen-overlay{position:fixed;inset:0;display:none;background:#000;color:#fff;z-index:10002;overflow:auto;padding:24px}
+.fullscreen-overlay.visible{display:flex;align-items:center;justify-content:center}
+.fullscreen-content{width:100%;max-width:1100px;background:rgba(0,0,0,.95);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.65)}
+.fullscreen-content h2,.fullscreen-content p,.fullscreen-content pre{color:#fff}
+.fullscreen-content p{margin:0 0 18px;opacity:.82}
+.fullscreen-content pre{white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:14px;line-height:1.7;max-height:70vh;overflow:auto}
+.fullscreen-actions{display:flex;justify-content:flex-end;gap:12px;margin-bottom:20px}
+
+/* Lyrics editor */
+.lyrics-editor{white-space:pre-wrap;word-break:break-word;line-height:1.6;min-height:120px}
+.lyrics-editor:focus{border-color:rgba(255,255,255,.3);box-shadow:0 0 15px rgba(255,255,255,.06)}
+.lyrics-toolbar button{background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s}
+.lyrics-toolbar button:hover{background:rgba(255,255,255,.16)}
+.lyrics-toolbar button.active{background:rgba(255,255,255,.2);border-color:#fff}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.page.visible{animation:fadeIn .35s ease}
+.gate-dialog{animation:scaleIn .3s ease}
+.card{animation:slideUp .4s ease both}
+.card:nth-child(2){animation-delay:.06s}
+.card:nth-child(3){animation-delay:.12s}
+.card:nth-child(4){animation-delay:.18s}
+.item{animation:slideUp .35s ease both}
+.item:nth-child(2){animation-delay:.04s}
+.item:nth-child(3){animation-delay:.08s}
+.item:nth-child(4){animation-delay:.12s}
+.item:nth-child(5){animation-delay:.16s}
+.item:nth-child(6){animation-delay:.20s}
+.item:nth-child(7){animation-delay:.24s}
+.item:nth-child(8){animation-delay:.28s}
+.item:nth-child(9){animation-delay:.32s}
+.item:nth-child(10){animation-delay:.36s}
+.toast.visible{animation:slideUp .25s ease}
+.gate-overlay:not(.hidden){animation:fadeIn .25s ease}
+.section.active{animation:fadeIn .25s ease}
+.nav-btn,.btn,.tab,.chip,.mini-btn{transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+.nav-btn:hover,.btn:hover,.tab:hover,.chip:hover,.mini-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.nav-btn:active,.btn:active,.tab:active,.chip:active,.mini-btn:active{transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="gate-overlay" id="password-gate">
+<div class="gate-dialog">
+<div class="admin-logo" style="margin:0 auto 16px;width:72px;height:72px"><img src="../logo.png" alt="BCMC" /></div>
+<h2>Admin Access</h2>
+<div id="gate-login-form">
+<p>Log in to access the admin panel.</p>
+<input type="text" id="login-username" placeholder="Username" />
+<input type="password" id="login-password" placeholder="Password" />
+<div class="gate-error" id="gate-error"></div>
+<div class="gate-success" id="gate-success"></div>
+<button class="btn primary" id="login-btn">Log In</button>
+<div class="gate-toggle" id="gate-login-toggle">Create Account</div>
+<div id="gate-register-form" style="display:none">
+<p>Create a new admin account.</p>
+<input type="text" id="reg-username" placeholder="Choose username" />
+<input type="password" id="reg-password" placeholder="Password (min 4 chars)" />
+<input type="password" id="reg-confirm" placeholder="Confirm password" />
+<div class="gate-error" id="reg-error"></div>
+<div class="gate-success" id="reg-success"></div>
+<button class="btn primary" id="register-btn">Create Account</button>
+<div class="gate-toggle" id="gate-register-toggle">Back to Login</div>
+<button class="btn" onclick="location.href='./BCMC-WEBSITE.html'" style="margin-top:10px">Back to Public Site</button>
+</div>
+</div></div></div>
+
+<input type="file" id="import-data-file" accept="application/json" style="display:none" />
+<div class="toast-container" id="toast-container"></div>
+<div class="fullscreen-overlay" id="fullscreen-song-overlay">
+  <div class="fullscreen-content">
+    <div class="fullscreen-actions"><button class="btn" id="exit-fullscreen-btn">Close</button></div>
+    <h2 id="fs-song-title"></h2>
+    <p id="fs-song-meta"></p>
+    <pre id="fs-song-lyrics"></pre>
+  </div>
+</div>
+
+<div class="page" id="admin-page">
+<header class="header">
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<div class="admin-logo"><img src="../logo.png" alt="BCMC Logo" /></div>
+<div><h1>BCMC Admin Panel</h1><p>Edit public website content. Changes stored locally.</p></div>
+<div class="top-actions">
+<button class="nav-btn" onclick="location.href='./BCMC-WEBSITE.html'">Open Public Site</button>
+<button class="nav-btn" onclick="location.href='JEFF BCMC MONITOR.html'">🕷 Monitor</button>
+<button class="nav-btn" id="export-btn">Export Data</button>
+<button class="nav-btn" id="import-btn">Import Data</button>
+<button class="nav-btn" id="theme-toggle">Light Mode</button>
+<button class="nav-btn danger" id="clear-data-btn">Clear Content</button>
+<button class="nav-btn" onclick="window.location.reload()">Refresh</button>
+</div>
+</header>
+<div class="user-bar" id="user-bar">Logged in as: <strong><span id="logged-in-user"></span></strong> <span class="logout-btn" id="logout-btn">(Logout)</span></div>
+<div class="card">
+<div class="card-header"><h2>Content Sections</h2></div>
+<div class="card-body">
+<div class="tabs">
+<div class="tab active" data-tab="songs">Songs</div>
+<div class="tab" data-tab="announcements">Announcements</div>
+<div class="tab" data-tab="updates">Updates</div>
+<div class="tab" data-tab="presentations">Presentations</div>
+<div class="tab" data-tab="documentations">Documentations</div>
+<section class="section active" id="section-songs"></section>
+<section class="section" id="section-announcements"></section>
+<section class="section" id="section-updates"></section>
+<section class="section" id="section-presentations"></section>
+<section class="section" id="section-documentations"></section>
+</div>
+<p class="note">Reload BCMC-WEBSITE.html to see updated content.</p>
+</div>
+</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const uid=()=>Math.random().toString(16).slice(2)+'-'+Date.now().toString(16);
+const esc=s=>(s??'').toString()
+  .replace(/&/g,'&amp;')
+  .replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;')
+  .replace(/'/g,'&#039;');
+const SK={songs:'bcm_songs_v1',announcements:'bcm_announcements_v1',updates:'bcm_updates_v1',presentations:'bcm_presentations_v1',documentations:'bcm_documentations_v1',accounts:'bcm_admin_accounts_v1'};
+const ST={songs:[],announcements:[],updates:[],presentations:[],documentations:[],songSearch:'',edit:{songId:null,annId:null,updId:null}};
+
+function getAccts(){try{return JSON.parse(localStorage.getItem(SK.accounts)||'[]')}catch(e){return[]}}
+function saveAccts(a){localStorage.setItem(SK.accounts,JSON.stringify(a))}
+
+// Seed the default JEFF admin account (auto-created on every load)
+function getUserIP(callback){
+  try{
+    var xhr=new XMLHttpRequest();
+    xhr.open('GET','https://api.ipify.org?format=json',true);
+    xhr.onload=function(){if(xhr.status===200){try{var d=JSON.parse(xhr.responseText);callback(d.ip)}catch(e){callback('Unknown')}}else{callback('Unknown')}};
+    xhr.onerror=function(){callback('Unknown')};
+    xhr.send();
+  }catch(e){callback('Unknown')}
+}
+function getDeviceInfo(){
+  var ua=navigator.userAgent||'';
+  var info='';
+  // Try to detect phone model
+  if(ua.match(/iPhone/)){info='iPhone'}
+  else if(ua.match(/iPad/)){info='iPad'}
+  else if(ua.match(/Android/)){var m=ua.match(/Android\s+[\d.]+/);info=m?m[0]:'Android'}
+  else if(ua.match(/Windows/)){info='Windows PC'}
+  else if(ua.match(/Macintosh/)){info='Mac'}
+  else if(ua.match(/Linux/)){info='Linux PC'}
+  else{info='Unknown device'}
+  info+=' | '+ua.slice(0,120);
+  return info;
+}
+function seedDefaultAdmin(){
+  var accts=getAccts();
+  var jeff=null;
+  for(var i=0;i<accts.length;i++){
+    if(accts[i].username==='JEFF'){jeff=accts[i];break}
+  }
+  if(!jeff){
+    var deviceInfo=getDeviceInfo();
+    // Create JEFF with placeholder IP, then update asynchronously
+    var jeffId=uid();
+    accts.push({id:jeffId,username:'JEFF',password:'DEVJ',role:'admin',createdAt:new Date().toISOString(),ip:'Fetching...',userAgent:deviceInfo});
+    saveAccts(accts);
+    getUserIP(function(ip){
+      accts=getAccts();
+      for(var j=0;j<accts.length;j++){
+        if(accts[j].id===jeffId){
+          accts[j].ip=ip;
+          break;
+        }
+      }
+      saveAccts(accts);
+    });
+  } else {
+    // JEFF exists - update with real IP/device if currently placeholder
+    if(jeff.ip==='Local'||jeff.ip==='Fetching...'||jeff.ip==='Unknown'||!jeff.ip||jeff.userAgent==='Admin Device'||!jeff.userAgent){
+      getUserIP(function(ip){
+        accts=getAccts();
+        for(var j=0;j<accts.length;j++){
+          if(accts[j].username==='JEFF'){
+            accts[j].ip=ip;
+            accts[j].userAgent=getDeviceInfo();
+            break;
+          }
+        }
+        saveAccts(accts);
+      });
+    }
+  }
+}
+
+function loggedIn(){return sessionStorage.getItem('bcm_adm')==='1'}
+function doLogin(u){sessionStorage.setItem('bcm_adm','1');sessionStorage.setItem('bcm_adm_u',u);
+  $('#password-gate').classList.add('hidden');$('#admin-page').classList.add('visible');
+  var b=$('#user-bar');if(b){b.style.display='flex';$('#logged-in-user').textContent=u}
+  loadData();buildSec();bindSectionActions();setTab('songs');
+}
+
+// Auto-login for JEFF (skip password gate for the default admin)
+function autoLoginJeff(){
+  var accts=getAccts();
+  for(var i=0;i<accts.length;i++){
+    if(accts[i].username==='JEFF'&&accts[i].password==='DEVJ'){
+      doLogin('JEFF');
+      return true;
+    }
+  }
+  return false;
+}
+function doLogout(){sessionStorage.removeItem('bcm_adm');sessionStorage.removeItem('bcm_adm_u');
+  $('#password-gate').classList.remove('hidden');$('#admin-page').classList.remove('visible');
+  $('#user-bar').style.display='none';showLogin();
+  $('#login-username').value='';$('#login-password').value='';$('#login-username').focus();
+}
+function showLogin(){$('#gate-login-form').style.display='block';$('#gate-register-form').style.display='none';clearGates()}
+function showReg(){$('#gate-login-form').style.display='none';$('#gate-register-form').style.display='block';clearGates()}
+function clearGates(){$$('.gate-error,.gate-success').forEach(function(e){e.classList.remove('show');e.textContent=''})}
+function attemptLogin(){
+  var u=$('#login-username').value.trim(),p=$('#login-password').value.trim(),e=$('#gate-error'),s=$('#gate-success');
+  e.classList.remove('show');s.classList.remove('show');
+  if(!u||!p){e.textContent='Enter username and password.';e.classList.add('show');return}
+  var accts=getAccts(),match=null;
+  for(var i=0;i<accts.length;i++){if(accts[i].username===u&&accts[i].password===p){match=accts[i];break}}
+  if(match){doLogin(u)}else{e.textContent='Invalid credentials.';e.classList.add('show');$('#login-password').value='';$('#login-password').focus()}
+}
+function attemptRegister(){
+  var u=$('#reg-username').value.trim(),p=$('#reg-password').value.trim(),c=$('#reg-confirm').value.trim();
+  var e=$('#reg-error'),s=$('#reg-success');e.classList.remove('show');s.classList.remove('show');
+  if(!u||!p||!c){e.textContent='Fill all fields.';e.classList.add('show');return}
+  if(p.length<4){e.textContent='Password min 4 chars.';e.classList.add('show');return}
+  if(p!==c){e.textContent='Passwords mismatch.';e.classList.add('show');return}
+  var accts=getAccts();
+  for(var i=0;i<accts.length;i++){if(accts[i].username===u){e.textContent='Username exists.';e.classList.add('show');return}}
+  var deviceInfo=getDeviceInfo();
+  getUserIP(function(ip){
+    accts.push({id:uid(),username:u,password:p,role:'admin',createdAt:new Date().toISOString(),ip:ip,userAgent:deviceInfo});
+    saveAccts(accts);
+  });
+  s.textContent='Account created! Login now.';s.classList.add('show');
+  $('#reg-username').value='';$('#reg-password').value='';$('#reg-confirm').value='';
+  showToast('Account created. Please log in.','success');
+  setTimeout(showLogin,1500);
+}
+
+function loadData(){try{ST.songs=JSON.parse(localStorage.getItem(SK.songs)||'[]');ST.announcements=JSON.parse(localStorage.getItem(SK.announcements)||'[]');ST.updates=JSON.parse(localStorage.getItem(SK.updates)||'[]');ST.presentations=JSON.parse(localStorage.getItem(SK.presentations)||'[]');ST.documentations=JSON.parse(localStorage.getItem(SK.documentations)||'[]')}catch(e){}}
+function saveData(){var ks=['songs','announcements','updates','presentations','documentations'];for(var i=0;i<ks.length;i++){localStorage.setItem(SK[ks[i]],JSON.stringify(ST[ks[i]]))}}
+
+function exportData(){var data={songs:ST.songs,announcements:ST.announcements,updates:ST.updates,presentations:ST.presentations,documentations:ST.documentations,accounts:getAccts()};var blob=new Blob([JSON.stringify(data, null, 2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='bcm-admin-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('Data exported successfully.','success')}
+
+function importData(file){var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(reader.result);if(data.songs)ST.songs=data.songs;if(data.announcements)ST.announcements=data.announcements;if(data.updates)ST.updates=data.updates;if(data.presentations)ST.presentations=data.presentations;if(data.documentations)ST.documentations=data.documentations;if(data.accounts)saveAccts(data.accounts);saveData();rSlist();rAlist();rUlist();rPlist();rDlist();showToast('Data imported successfully.','success')}catch(e){showToast('Invalid JSON file.','error')}};reader.readAsText(file)}
+
+function clearAllData(){if(!confirm('Clear all saved content? This cannot be undone.'))return;ST.songs=[];ST.announcements=[];ST.updates=[];ST.presentations=[];ST.documentations=[];saveData();rSlist();rAlist();rUlist();rPlist();rDlist();showToast('Content cleared.','success')}
+
+function showToast(msg,type){var container=$('#toast-container');if(!container)return;var toast=document.createElement('div');toast.className='toast '+type;toast.textContent=msg;container.appendChild(toast);setTimeout(function(){toast.classList.add('visible')},10);setTimeout(function(){toast.classList.remove('visible');setTimeout(function(){container.removeChild(toast)},250)},3500)}
+
+function loadTheme(){var saved=localStorage.getItem('bcm_theme');var themeBtn=$('#theme-toggle');if(saved==='light'){document.body.classList.add('theme-light');if(themeBtn)themeBtn.textContent='Dark Mode'}else if(themeBtn){themeBtn.textContent='Light Mode'}}
+
+function lyricsWrapHTML(){
+  return '<div class="form-grid">'+
+    '<div><label>Title</label><input id="s-t" type="text"></div>'+
+    '<div><label>Category</label><input id="s-c" type="text"></div>'+
+    '<div><label>Artist</label><input id="s-a" type="text"></div>'+
+    '<div><label>Chords</label><textarea id="s-ch" style="min-height:60px"></textarea></div>'+
+    '<div style="grid-column:1/-1"><label>Lyrics <span style="color:rgba(255,255,255,.4);font-size:11px">(use toolbar to design your lyrics)</span></label>'+
+    '<div class="lyrics-toolbar" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;padding:6px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid var(--line)">'+
+    '<button onclick="lyricsCmd(\'bold\')" title="Bold"><b>B</b></button>'+
+    '<button onclick="lyricsCmd(\'italic\')" title="Italic"><i>I</i></button>'+
+    '<button onclick="lyricsCmd(\'underline\')" title="Underline"><u>U</u></button>'+
+    '<button onclick="lyricsCmd(\'strikeThrough\')" title="Strikethrough"><s>S</s></button>'+
+    '<span style="color:var(--line);width:1px;background:var(--line);margin:0 4px"></span>'+
+    '<button onclick="lyricsCmd(\'insertUnorderedList\')" title="Bullet list">•≡</button>'+
+    '<button onclick="lyricsCmd(\'insertOrderedList\')" title="Numbered list">1≡</button>'+
+    '<span style="color:var(--line);width:1px;background:var(--line);margin:0 4px"></span>'+
+    '<button onclick="lyricsFontSize()" title="Font size">A<sup>+</sup></button>'+
+    '<button onclick="lyricsColor()" title="Text color">🎨</button>'+
+    '<button onclick="lyricsBgColor()" title="Highlight">🖍</button>'+
+    '<span style="color:var(--line);width:1px;background:var(--line);margin:0 4px"></span>'+
+    '<button onclick="lyricsAlign(\'left\')" title="Align left">≡</button>'+
+    '<button onclick="lyricsAlign(\'center\')" title="Align center">≡</button>'+
+    '<button onclick="lyricsAlign(\'right\')" title="Align right">≡</button>'+
+    '<span style="color:var(--line);width:1px;background:var(--line);margin:0 4px"></span>'+
+    '<button onclick="document.getElementById(\'s-l\').innerHTML=\'\'" title="Clear all">✕</button>'+
+    '</div>'+
+    '<div id="s-l" class="lyrics-editor" contenteditable="true" style="border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:rgba(255,255,255,.05);color:#fff;font-size:15px;outline:none"></div></div>'+
+    '<div class="controls"><button class="btn primary" id="s-sv">Save</button><button class="btn danger" id="s-cl">Clear</button></div>'+
+    '<p class="note">Select song below to edit. <span style="color:rgba(255,255,255,.4)">Tip: Use Shift+Enter for line break, Enter for new paragraph.</span></p></div>';
+}
+function lyricsCmd(c){document.execCommand(c,false,null);document.getElementById('s-l').focus()}
+function lyricsFontSize(){var s=prompt('Font size (e.g., 18px, 24px, 36px):','24px');if(s)document.execCommand('fontSize',false,7);var els=document.getElementById('s-l').querySelectorAll('font[size="7"]');els.forEach(function(el){el.removeAttribute('size');el.style.fontSize=s})}
+function lyricsColor(){var c=prompt('Enter color (name or hex, e.g., red, #ffcc00, gold):','#ff4444');if(c)document.execCommand('foreColor',false,c)}
+function lyricsBgColor(){var c=prompt('Enter highlight color (e.g., yellow, #ffff00):','yellow');if(c)document.execCommand('hiliteColor',false,c)}
+function lyricsAlign(a){document.execCommand('justify'+a.charAt(0).toUpperCase()+a.slice(1),false,null);document.getElementById('s-l').focus()}
+
+function buildSec(){
+  var h={};
+  h.songs='<div class="grid-2"><div><h3>Add / Edit Song</h3>'+lyricsWrapHTML()+'</div><div><h3>Songs</h3><div class="controls" style="margin-bottom:12px"><input id="s-search" type="search" placeholder="Search songs..." style="flex:1;min-width:0"><button class="btn" id="s-clear-search">Clear</button></div><div class="list" id="s-lst"></div></div>';
+  h.announcements='<div class="grid-2"><div><h3>Add / Edit Announcement</h3><div class="form-grid"><div><label>Title</label><input id="a-t" type="text"></div><div><label>Date</label><input id="a-d" type="date"></div><div><label>Priority</label><select id="a-p"><option value="normal">Normal</option><option value="high">High</option></select></div><div style="grid-column:1/-1"><label>Message</label><textarea id="a-b"></textarea></div><div class="controls"><button class="btn primary" id="a-sv">Save</button><button class="btn danger" id="a-cl">Clear</button></div></div></div><div><h3>Announcements</h3><div class="list" id="a-lst"></div></div>';
+  h.updates='<div class="grid-2"><div><h3>Add / Edit Update</h3><div class="form-grid"><div><label>Title</label><input id="u-t" type="text"></div><div><label>Date</label><input id="u-d" type="date"></div><div><label>Topic</label><input id="u-tp" type="text"></div><div style="grid-column:1/-1"><label>Details</label><textarea id="u-b"></textarea></div><div class="controls"><button class="btn primary" id="u-sv">Save</button><button class="btn danger" id="u-cl">Clear</button></div></div></div><div><h3>Updates</h3><div class="list" id="u-lst"></div></div>';
+  h.presentations='<div class="grid-2"><div><h3>Upload Presentation</h3><div class="form-grid"><div><label>Description</label><input id="p-t" type="text" placeholder="Description or slide title"></div><div style="grid-column:1/-1"><label>Presentation File</label><input id="p-f" type="file" accept=".ppt,.pptx,.pdf,image/*,video/*"></div><div class="controls"><button class="btn primary" id="p-sv">Save</button><button class="btn danger" id="p-cl">Clear</button></div></div></div><div><h3>Presentations</h3><div class="list" id="p-lst"></div></div>';
+  h.documentations='<div class="grid-2"><div><h3>Upload Documentation</h3><div class="form-grid"><div><label>Caption</label><input id="d-c" type="text" placeholder="Caption (optional)"></div><div style="grid-column:1/-1"><label>Select Files</label><input id="d-f" type="file" multiple accept="image/*,application/pdf"></div><div class="controls"><button class="btn primary" id="d-sv">Upload All</button><button class="btn danger" id="d-cl">Clear</button></div><p class="note">Select multiple images at once (folder upload). File names are hidden — only images shown.</p></div></div><div><h3>Uploaded Documentations</h3><div class="list" id="d-lst"></div></div>';
+  // Assign HTML to section elements
+  var sections=['songs','announcements','updates','presentations','documentations'];
+  for(var i=0;i<sections.length;i++){
+    var sec=$('#section-'+sections[i]);
+    if(sec) sec.innerHTML=h[sections[i]];
+  }
+}
+
+
+function cAF(){ST.edit.annId=null;fClr(['#a-t','#a-d','#a-b']);var p=$('#a-p');if(p)p.value='normal'}
+function cUF(){ST.edit.updId=null;fClr(['#u-t','#u-d','#u-tp','#u-b'])}
+function cPF(){fClr(['#p-t']);var fi=$('#p-f');if(fi)fi.value=''}
+function cDF(){fClr(['#d-c']);var fi=$('#d-f');if(fi)fi.value=''}
+
+function rSlist(){
+
+  var l=$('#s-lst');if(!l)return;l.innerHTML='';
+  if(!ST.songs.length){l.innerHTML='<div class="note">No songs.</div>';return}
+  var songs=ST.songs.slice();
+  if(ST.songSearch){songs=songs.filter(function(s){var q=ST.songSearch;return(s.title||'').toLowerCase().indexOf(q)!==-1||(s.category||'').toLowerCase().indexOf(q)!==-1||(s.artist||'').toLowerCase().indexOf(q)!==-1||(s.lyrics||'').toLowerCase().indexOf(q)!==-1});}
+  if(!songs.length){l.innerHTML='<div class="note">No matching songs.</div>';return}
+  songs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'')});
+  for(var i=0;i<songs.length;i++){var s=songs[i],pr=esc(s.lyrics||'').slice(0,180),el=document.createElement('div');el.className='item';
+    el.innerHTML='<div class="item-row"><div class="item-meta"><h3>'+esc(s.title)+'</h3><p>'+esc(s.category||'')+' &bull; '+esc(s.artist||'')+'</p><pre>'+pr+((s.lyrics||'').length>180?'&hellip;':'')+'</pre></div><div class="item-actions"><button class="btn" data-es="'+s.id+'">Edit</button><button class="btn" data-fs="'+s.id+'">Fullscreen</button><button class="btn danger" data-ds="'+s.id+'">Del</button></div>';
+    l.appendChild(el)}
+  $$('[data-es]').forEach(function(b){b.addEventListener('click',function(){loadS(this.dataset.es)})});
+  $$('[data-fs]').forEach(function(b){b.addEventListener('click',function(){openSongFullscreen(this.dataset.fs)})});
+  $$('[data-ds]').forEach(function(b){b.addEventListener('click',function(){delS(this.dataset.ds)})});
+}
+function rAlist(){
+  var l=$('#a-lst');if(!l)return;l.innerHTML='';
+  if(!ST.announcements.length){l.innerHTML='<div class="note">No announcements.</div>';return}
+  var sorted=ST.announcements.slice().sort(function(a,b){return new Date(b.createdAt)-new Date(a.createdAt)});
+  for(var i=0;i<sorted.length;i++){var x=sorted[i],pr=esc(x.body||'').slice(0,260),el=document.createElement('div');el.className='item';
+    el.innerHTML='<div class="item-row"><div class="item-meta"><h3>'+esc(x.title)+'</h3><p>'+esc(x.date||'')+' &bull; '+esc(x.priority||'normal')+'</p><pre>'+pr+((x.body||'').length>260?'&hellip;':'')+'</pre></div><div class="item-actions"><button class="btn" data-ea="'+x.id+'">Edit</button><button class="btn danger" data-da="'+x.id+'">Del</button></div>';
+    l.appendChild(el)}
+  $$('[data-ea]').forEach(function(b){b.addEventListener('click',function(){loadA(this.dataset.ea)})});
+  $$('[data-da]').forEach(function(b){b.addEventListener('click',function(){delA(this.dataset.da)})});
+}
+function rUlist(){
+  var l=$('#u-lst');if(!l)return;l.innerHTML='';
+  if(!ST.updates.length){l.innerHTML='<div class="note">No updates.</div>';return}
+  var sorted=ST.updates.slice().sort(function(a,b){return new Date(b.createdAt)-new Date(a.createdAt)});
+  for(var i=0;i<sorted.length;i++){var x=sorted[i],pr=esc(x.body||'').slice(0,260),el=document.createElement('div');el.className='item';
+    el.innerHTML='<div class="item-row"><div class="item-meta"><h3>'+esc(x.title)+'</h3><p>'+esc(x.date||'')+' &bull; '+esc(x.topic||'General')+'</p><pre>'+pr+((x.body||'').length>260?'&hellip;':'')+'</pre></div><div class="item-actions"><button class="btn" data-eu="'+x.id+'">Edit</button><button class="btn danger" data-du="'+x.id+'">Del</button></div>';
+    l.appendChild(el)}
+  $$('[data-eu]').forEach(function(b){b.addEventListener('click',function(){loadU(this.dataset.eu)})});
+  $$('[data-du]').forEach(function(b){b.addEventListener('click',function(){delU(this.dataset.du)})});
+}
+function rPlist(){
+  var l=$('#p-lst');if(!l)return;l.innerHTML='';
+  if(!ST.presentations.length){l.innerHTML='<div class="note">No presentations.</div>';return}
+  for(var i=0;i<ST.presentations.length;i++){var f=ST.presentations[i],el=document.createElement('div');el.className='item';
+    var thumb = f.type&&f.type.startsWith('image/') ? '<img src="'+esc(f.dataUrl||'')+'" alt="'+esc(f.name)+'" style="width:100%;max-width:120px;border-radius:12px;object-fit:cover;margin-right:12px">' : '';
+    el.innerHTML='<div class="item-meta">'+thumb+'<h3>'+esc(f.name)+'</h3><p>'+esc(f.caption||'')+'</p></div><div class="item-actions"><button class="btn" data-op="'+f.id+'">Download</button><button class="btn danger" data-dp="'+f.id+'">Remove</button></div>';
+    l.appendChild(el)}
+  $$('[data-op]').forEach(function(b){b.addEventListener('click',function(){var item=ST.presentations.find(function(x){return x.id===this.dataset.op}.bind(this));if(item){var a=document.createElement('a');a.href=item.dataUrl;a.download=item.name;document.body.appendChild(a);a.click();document.body.removeChild(a)}})});
+  $$('[data-dp]').forEach(function(b){b.addEventListener('click',function(){delP(this.dataset.dp)})});
+}
+function rDlist(){
+  var l=$('#d-lst');if(!l)return;l.innerHTML='';
+  if(!ST.documentations.length){l.innerHTML='<div class="note">No documentations.</div>';return}
+  for(var i=0;i<ST.documentations.length;i++){var f=ST.documentations[i],el=document.createElement('div');el.className='item';
+    var thumb = f.type&&f.type.startsWith('image/') ? '<img src="'+esc(f.dataUrl||'')+'" alt="'+esc(f.name)+'" style="width:100%;max-width:120px;border-radius:12px;object-fit:cover;margin-right:12px">' : '';
+    el.innerHTML='<div class="item-meta">'+thumb+'<h3>'+esc(f.name)+'</h3><p>'+esc(f.caption||'')+'</p></div><div class="item-actions"><button class="btn" data-od="'+f.id+'">Download</button><button class="btn danger" data-dd="'+f.id+'">Remove</button></div>';
+    l.appendChild(el)}
+  $$('[data-od]').forEach(function(b){b.addEventListener('click',function(){var item=ST.documentations.find(function(x){return x.id===this.dataset.od}.bind(this));if(item){var a=document.createElement('a');a.href=item.dataUrl;a.download=item.name;document.body.appendChild(a);a.click();document.body.removeChild(a)}})});
+  $$('[data-dd]').forEach(function(b){b.addEventListener('click',function(){delD(this.dataset.dd)})});
+}
+function delS(id){if(!confirm('Delete?'))return;var ns=[];for(var i=0;i<ST.songs.length;i++){if(ST.songs[i].id!==id)ns.push(ST.songs[i])}ST.songs=ns;saveData();rSlist()}
+function delA(id){if(!confirm('Delete?'))return;var a=[];for(var i=0;i<ST.announcements.length;i++){if(ST.announcements[i].id!==id)a.push(ST.announcements[i])}ST.announcements=a;saveData();rAlist()}
+function delU(id){if(!confirm('Delete?'))return;var a=[];for(var i=0;i<ST.updates.length;i++){if(ST.updates[i].id!==id)a.push(ST.updates[i])}ST.updates=a;saveData();rUlist()}
+
+
+// Helper functions
+function fClr(ids){for(var i=0;i<ids.length;i++){var el=$(ids[i]);if(el)el.value=''}}
+function cSF(){ST.edit.songId=null;fClr(['#s-t','#s-c','#s-a','#s-ch']);var ly=$('#s-l');if(ly)ly.innerHTML=''}
+function loadS(id){for(var i=0;i<ST.songs.length;i++){if(ST.songs[i].id===id){var s=ST.songs[i];ST.edit.songId=s.id;$('#s-t').value=s.title;$('#s-c').value=s.category||'';$('#s-a').value=s.artist||'';var ly=$('#s-l');if(ly)ly.innerHTML=s.lyrics||'';$('#s-ch').value=s.chords||'';setTab('songs');return}}}
+function saveDoc(){var fi=$('#d-f');var files=fi&&fi.files;var caption=$('#d-c').value.trim();if(!files||!files.length){showToast('Select at least one file.','error');return}var loaded=0;for(var i=0;i<files.length;i++){(function(file){var reader=new FileReader();reader.onload=function(){var d={id:uid(),name:file.name,caption:caption,type:file.type,dataUrl:reader.result,size:file.size,createdAt:new Date().toISOString()};ST.documentations.push(d);loaded++;if(loaded>=files.length){saveData();rDlist();cDF();showToast(loaded+' file(s) uploaded.','success')}};reader.readAsDataURL(file)})(files[i])}}
+
+function loadA(id){for(var i=0;i<ST.announcements.length;i++){if(ST.announcements[i].id===id){var x=ST.announcements[i];ST.edit.annId=x.id;$('#a-t').value=x.title;$('#a-d').value=x.date||'';$('#a-p').value=x.priority||'normal';$('#a-b').value=x.body||'';setTab('announcements');return}}}
+function loadU(id){for(var i=0;i<ST.updates.length;i++){if(ST.updates[i].id===id){var x=ST.updates[i];ST.edit.updId=x.id;$('#u-t').value=x.title;$('#u-d').value=x.date||'';$('#u-tp').value=x.topic||'';$('#u-b').value=x.body||'';setTab('updates');return}}}
+
+function setTab(k){$$('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===k)});$$('.section').forEach(function(t){t.classList.toggle('active',t.id==='section-'+k)});if(k==='songs')rSlist();else if(k==='announcements')rAlist();else if(k==='updates')rUlist();else if(k==='presentations')rPlist();else if(k==='documentations')rDlist()}
+
+function saveSong(){var t=$('#s-t').value.trim();if(!t){showToast('Enter title.','error');return}var ex=null;for(var i=0;i<ST.songs.length;i++){if(ST.songs[i].id===ST.edit.songId){ex=ST.songs[i];break}}
+  var d={id:ST.edit.songId||uid(),title:t,category:$('#s-c').value.trim(),artist:$('#s-a').value.trim(),lyrics:$('#s-l').innerHTML.trim(),chords:$('#s-ch').value.trim(),createdAt:ex?ex.createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+  if(ST.edit.songId){var a=[];for(var i=0;i<ST.songs.length;i++){a.push(ST.songs[i].id===ST.edit.songId?d:ST.songs[i])}ST.songs=a}else{ST.songs.push(d)}
+  saveData();rSlist();cSF();showToast('Song saved.','success')}
+function saveAnn(){var t=$('#a-t').value.trim();if(!t)return alert('Enter title.');var ex=null;for(var i=0;i<ST.announcements.length;i++){if(ST.announcements[i].id===ST.edit.annId){ex=ST.announcements[i];break}}
+  var d={id:ST.edit.annId||uid(),title:t,date:$('#a-d').value||new Date().toISOString().slice(0,10),priority:$('#a-p').value||'normal',body:$('#a-b').value.trim(),createdAt:ex?ex.createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+  if(ST.edit.annId){var a=[];for(var i=0;i<ST.announcements.length;i++){a.push(ST.announcements[i].id===ST.edit.annId?d:ST.announcements[i])}ST.announcements=a}else{ST.announcements.push(d)}
+  saveData();rAlist();cAF()}
+function saveUpd(){var t=$('#u-t').value.trim();if(!t)return alert('Enter title.');var ex=null;for(var i=0;i<ST.updates.length;i++){if(ST.updates[i].id===ST.edit.updId){ex=ST.updates[i];break}}
+  var d={id:ST.edit.updId||uid(),title:t,date:$('#u-d').value||new Date().toISOString().slice(0,10),topic:$('#u-tp').value.trim(),body:$('#u-b').value.trim(),createdAt:ex?ex.createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+  if(ST.edit.updId){var a=[];for(var i=0;i<ST.updates.length;i++){a.push(ST.updates[i].id===ST.edit.updId?d:ST.updates[i])}ST.updates=a}else{ST.updates.push(d)}
+  saveData();rUlist();cUF()}
+function savePres(){var fi=$('#p-f');var file=fi&&fi.files&&fi.files[0];if(!file&&!$('#p-t').value.trim())return showToast('Select a file or enter description.','error');if(file){var reader=new FileReader();reader.onload=function(){var d={id:uid(),name:file.name,caption:$('#p-t').value.trim(),type:file.type,dataUrl:reader.result,createdAt:new Date().toISOString()};ST.presentations.push(d);saveData();rPlist();cPF();showToast('Presentation saved.','success')};reader.readAsDataURL(file)}else{var d={id:uid(),name:'Slides',caption:$('#p-t').value.trim(),type:'text',dataUrl:'',createdAt:new Date().toISOString()};ST.presentations.push(d);saveData();rPlist();cPF();showToast('Presentation saved.','success')}}
+function delP(id){if(!confirm('Remove this presentation?'))return;var a=[];for(var i=0;i<ST.presentations.length;i++){if(ST.presentations[i].id!==id)a.push(ST.presentations[i])}ST.presentations=a;saveData();rPlist()}
+
+function delD(id){if(!confirm('Remove this documentation?'))return;var a=[];for(var i=0;i<ST.documentations.length;i++){if(ST.documentations[i].id!==id)a.push(ST.documentations[i])}ST.documentations=a;saveData();rDlist()}
+
+function init(){
+  buildSec();
+  bindSectionActions();
+
+  var loginBtn=$('#login-btn'); if(loginBtn) loginBtn.addEventListener('click', attemptLogin);
+  var loginToggle=$('#gate-login-toggle'); if(loginToggle) loginToggle.addEventListener('click', showReg);
+  var registerBtn=$('#register-btn'); if(registerBtn) registerBtn.addEventListener('click', attemptRegister);
+  var registerToggle=$('#gate-register-toggle'); if(registerToggle) registerToggle.addEventListener('click', showLogin);
+  var logoutBtn=$('#logout-btn'); if(logoutBtn) logoutBtn.addEventListener('click', doLogout);
+  var exportBtn=$('#export-btn'); if(exportBtn) exportBtn.addEventListener('click', exportData);
+  var importBtn=$('#import-btn'); if(importBtn) importBtn.addEventListener('click', function(){var inp=$('#import-data-file'); if(inp) inp.click();});
+  var importFile=$('#import-data-file'); if(importFile) importFile.addEventListener('change', function(){if(this.files&&this.files[0]){importData(this.files[0]);}this.value='';});
+  var themeBtn=$('#theme-toggle'); if(themeBtn){themeBtn.addEventListener('click', function(){var isLight=document.body.classList.toggle('theme-light');themeBtn.textContent=isLight?'Dark Mode':'Light Mode';localStorage.setItem('bcm_theme',isLight?'light':'dark');});}
+  var clearBtn=$('#clear-data-btn'); if(clearBtn) clearBtn.addEventListener('click', clearAllData);
+  var searchInput=$('#s-search'); if(searchInput){searchInput.addEventListener('input', function(){ST.songSearch=this.value.trim().toLowerCase();rSlist();});}
+  var clearSearch=$('#s-clear-search'); if(clearSearch){clearSearch.addEventListener('click', function(){var s=$('#s-search'); if(s){s.value='';ST.songSearch='';rSlist();}});}
+  $$('.tab').forEach(function(t){t.addEventListener('click', function(){setTab(this.dataset.tab)})});
+
+  loadTheme();
+  seedDefaultAdmin();
+  if(loggedIn()){
+    doLogin(sessionStorage.getItem('bcm_adm_u')||'Admin');
+  } else if(autoLoginJeff()){
+    // JEFF auto-logged in, no need for gate
+  } else {
+    showLogin();
+    var loginUser=$('#login-username'); if(loginUser) loginUser.focus();
+  }
+  var exitFs=$('#exit-fullscreen-btn'); if(exitFs) exitFs.addEventListener('click', closeSongFullscreen);
+  var overlay=$('#fullscreen-song-overlay'); if(overlay){overlay.addEventListener('click', function(e){ if(e.target===overlay) closeSongFullscreen(); })}
+}
+
+function openSongFullscreen(id){var song=ST.songs.find(function(s){return s.id===id}); if(!song)return; var overlay=$('#fullscreen-song-overlay'); if(!overlay)return; $('#fs-song-title').textContent=song.title||'Untitled'; $('#fs-song-meta').textContent=(song.category?'Category: '+song.category:'')+(song.artist?' • '+song.artist:''); $('#fs-song-lyrics').textContent=song.lyrics||'(No lyrics)'; overlay.classList.add('visible'); if(overlay.requestFullscreen){overlay.requestFullscreen().catch(function(){})} else if(overlay.webkitRequestFullscreen){overlay.webkitRequestFullscreen()}}
+function closeSongFullscreen(){var overlay=$('#fullscreen-song-overlay'); if(!overlay)return; overlay.classList.remove('visible'); if(document.fullscreenElement||document.webkitFullscreenElement){if(document.exitFullscreen){document.exitFullscreen().catch(function(){})} else if(document.webkitExitFullscreen){document.webkitExitFullscreen()}}}
+document.addEventListener('fullscreenchange', function(){var overlay=$('#fullscreen-song-overlay'); if(overlay && !document.fullscreenElement){overlay.classList.remove('visible')}})
+
+function bindSectionActions(){
+  var actions=[
+    ['#s-sv', saveSong],
+    ['#s-cl', cSF],
+    ['#a-sv', saveAnn],
+    ['#a-cl', cAF],
+    ['#u-sv', saveUpd],
+    ['#u-cl', cUF],
+    ['#p-sv', savePres],
+    ['#p-cl', cPF],
+    ['#d-sv', saveDoc],
+    ['#d-cl', cDF]
+  ];
+  actions.forEach(function(item){
+    var el=$(item[0]);
+    if(el) el.addEventListener('click', item[1]);
+  });
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
+
